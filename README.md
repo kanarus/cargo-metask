@@ -8,7 +8,7 @@ A lightweight task runner for tasks defined in Cargo.toml
 cargo install cargo-metask
 ```
 
-Then `cargo metask` and alias `cargo meta` will be available.
+Then `cargo metask` and alias `cargo task` will be available.
 
 ## Usage
 
@@ -26,7 +26,7 @@ cargo metask greet
 
 # or
 
-cargo meta greet
+cargo task greet
 ```
 
 ## Development
