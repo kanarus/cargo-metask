@@ -15,7 +15,7 @@ pub fn run() -> io::Result<()> {
     } = {
         let mut args = env::args().collect::<Vec<_>>();
         if matches!(args.get(1).map(String::as_str), Some("task" | "metask")) {
-            // when invoked as `cargo meta` or `cargo metask`
+            // when invoked as `cargo task` or `cargo metask`
             args.remove(1);
         }
         Args::parse_from(args)
