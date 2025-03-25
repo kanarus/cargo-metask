@@ -1,8 +1,26 @@
-use std::{io, fs};
+use ::clap::Parser;
+use std::{io, fs, env};
 use std::path::Path;
 use std::process::{Command, Stdio, exit};
 
+#[derive(Parser)]
+#[command(version, about)]
+struct Args {
+    task_name: String,
+}
+
 pub fn run() -> io::Result<()> {
+    let Args {
+        task_name,
+    } = {
+        let mut args = env::args().collect::<Vec<_>>();
+        if matches!(args.get(1).map(String::as_str), Some("meta" | "metask")) {
+            // when invoked as `cargo meta` or `cargo metask`
+            args.remove(1);
+        }
+        Args::parse_from(args)
+    };
+
     let cargo_toml = {
         let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
         let content = fs::read_to_string(&path)?;
@@ -16,15 +34,6 @@ pub fn run() -> io::Result<()> {
         .and_then(|x| x.get("tasks"))
         .and_then(|x| x.as_table())
         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "`package.metadata.tasks` table not found"))?;
-
-    let mut args = std::env::args().skip(1);
-
-    let task_name = (match args.next() {
-        None => None,
-        Some(a) => matches!(&*a, "meta" | "metask")
-            .then(|| args.next())
-            .unwrap_or(Some(a)),
-    }).ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "task name not given"))?;
 
     let task = tasks
         .get(&task_name)
