@@ -1,6 +1,6 @@
 [package]
 name          = "cargo-metask"
-version       = "0.1.1"
+version       = "0.2.0"
 edition       = "2024"
 authors       = ["kanarus <kanarus786@gmail.com>"]
 documentation = "https://docs.rs/cargo-metask"
