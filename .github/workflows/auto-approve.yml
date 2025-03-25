@@ -14,10 +14,8 @@ jobs:
     if: |
       github.event.pull_request.user.login == 'kanarus' &&
       !github.event.pull_request.draft
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: hmarr/auto-approve-action@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: gh pr review ${{ github.event.number }} --approve --body "auto-approve by bot"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
