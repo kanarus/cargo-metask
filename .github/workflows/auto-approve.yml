@@ -15,7 +15,7 @@ jobs:
       github.event.pull_request.user.login == 'kanarus' &&
       !github.event.pull_request.draft
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - run: gh pr review ${{ github.event.number }} --approve --body "auto-approve by bot"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
