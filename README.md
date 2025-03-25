@@ -31,7 +31,7 @@ cargo task greet
 
 ## Development
 
-cargo-metask is currently in early development stage and may have some missing features. If you have any feedback or suggestions, feel free to open [Issues](https://github.com/kanarus/cargo-metask/issues) or [Pull requests](https://github.com/kanarus/cargo-metask/pulls)!
+cargo-metask is currently in early development stage and may have some unexpected behavior or missing features. If you have any feedback or suggestions, feel free to open [Issues](https://github.com/kanarus/cargo-metask/issues) or [Pull requests](https://github.com/kanarus/cargo-metask/pulls)!
 
 ## License
 
