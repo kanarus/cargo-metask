@@ -28,12 +28,10 @@ pub fn run() -> io::Result<()> {
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?
     };
 
-    let tasks = cargo_toml
-        .get("package")
-        .and_then(|x| x.get("metadata"))
-        .and_then(|x| x.get("tasks"))
-        .and_then(|x| x.as_table())
-        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "`package.metadata.tasks` table not found"))?;
+    let tasks = get_tasks(&cargo_toml).ok_or_else(|| io::Error::new(
+        io::ErrorKind::InvalidData,
+        "`{package, workspace}.metadata.tasks` not found"
+    ))?;
 
     let task = tasks
         .get(&task_name)
@@ -51,4 +49,11 @@ pub fn run() -> io::Result<()> {
         .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "process terminated by signal"))?;
 
     exit(code)
+}
+
+fn get_tasks(cargo_toml: &toml::Value) -> Option<&toml::Table> {
+    (cargo_toml.get("workspace")).or(cargo_toml.get("package"))?
+        .get("metadata")?
+        .get("tasks")?
+        .as_table()
 }
