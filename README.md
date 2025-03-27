@@ -1,6 +1,6 @@
 # cargo-metask
 
-A lightweight task runner for tasks defined in Cargo.toml
+A lightweight task runner for tasks defined as Cargo.toml metadata
 
 ## Installation
 
