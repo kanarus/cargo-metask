@@ -28,6 +28,10 @@ categories = [
 greet = "echo 'Hello, cargo-metask!'"
 build3 = "bash -c 'for i in {1..3}; do sleep 1 && cargo build; done'"
 
+[profile.release]
+lto = true
+codegen-units = 1
+
 [dependencies]
 toml = { version = "0.8", features = ["parse"] }
 clap = { version = "4.5", features = ["derive"] }
