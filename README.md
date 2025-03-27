@@ -12,7 +12,7 @@ Then `cargo metask` and alias `cargo task` will be available.
 
 ## Usage
 
-1. Define tasks in `package.metadata.tasks` of your `Cargo.toml` :
+1. Define tasks in `package.metadata.tasks` or `workspace.metadata.tasks` of your `Cargo.toml` :
 
 ```toml
 [package.metadata.tasks]
