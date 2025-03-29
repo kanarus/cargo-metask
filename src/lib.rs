@@ -1,6 +1,5 @@
 use ::clap::Parser;
 use std::{io, fs, env};
-use std::path::Path;
 use std::process::{Command, Stdio, exit};
 
 #[derive(Parser)]
@@ -22,9 +21,7 @@ pub fn run() -> io::Result<()> {
     };
 
     let cargo_toml = {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
-        let content = fs::read_to_string(&path)?;
-        toml::from_str::<toml::Value>(&content)
+        toml::from_str::<toml::Value>(&fs::read_to_string("Cargo.toml")?)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?
     };
 
@@ -38,7 +35,9 @@ pub fn run() -> io::Result<()> {
         .and_then(|x| x.as_str())
         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, format!("task `{task_name}` not found")))?;
 
-    let status = Command::new(option_env!("SHELL").unwrap_or("sh"))
+    let shell = env::var("SHELL");
+
+    let status = Command::new(shell.as_deref().unwrap_or("sh"))
         .args(["-c", task])
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
