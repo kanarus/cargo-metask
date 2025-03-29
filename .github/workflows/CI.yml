@@ -29,3 +29,13 @@ jobs:
 
       - name: Check buildability
         run: cargo check
+
+      - name: Test availability at anywhere
+        run: |
+          cargo install --path .
+          cargo new sample
+          cd sample
+          echo ''                         >> Cargo.toml
+          echo '[package.metadata.tasks]' >> Cargo.toml
+          echo 'greet = "echo hello"'     >> Cargo.toml
+          cargo task greet | grep 'hello'
