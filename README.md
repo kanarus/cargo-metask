@@ -1,8 +1,7 @@
-<h1 align="center">
-    cargo-metask
-</h1>
-
-Cargo task runner for `{package, workspace}.metadata.tasks`.
+<div align="center">
+    <h1>cargo-metask</h1>
+    Cargo task runner for `{package, workspace}.metadata.tasks`.
+</div>
 
 <div width="100%" align="right">
     <a href="https://github.com/kanarus/cargo-metask/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/crates/l/cargo-metask.svg" /></a>
