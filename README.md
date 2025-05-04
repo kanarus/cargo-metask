@@ -1,6 +1,13 @@
-# cargo-metask
+<h1 align="center">
+    cargo-metask
+    <div width="100%" align="right">
+        <a href="https://github.com/kanarus/cargo-metask/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/crates/l/cargo-metask.svg" /></a>
+        <a href="https://github.com/kanarus/cargo-metask/actions"><img alt="CI status" src="https://github.com/kanarus/cargo-metask/actions/workflows/CI.yml/badge.svg"/></a>
+        <a href="https://crates.io/crates/cargo-metask"><img alt="crates.io" src="https://img.shields.io/crates/v/cargo-metask" /></a>
+    </div>
+</h1>
 
-Cargo task runner for `package.metadata.tasks` or `workdspace.metadata.tasks` .
+Cargo task runner for `{package, workspace}.metadata.tasks`.
 
 ## Installation
 
