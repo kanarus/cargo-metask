@@ -1,6 +1,6 @@
 # cargo-metask
 
-Cargo task runner for package.metadata.tasks
+Cargo task runner for `package.metadata.tasks` or `workdspace.metadata.tasks` .
 
 ## Installation
 
