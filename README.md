@@ -1,6 +1,6 @@
 <div align="center">
     <h1>cargo-metask</h1>
-    Cargo task runner for `{package, workspace}.metadata.tasks`.
+    <p>Cargo task runner for `{package, workspace}.metadata.tasks`.</p>
 </div>
 
 <div width="100%" align="right">
