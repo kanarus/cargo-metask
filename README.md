@@ -1,6 +1,13 @@
-# cargo-metask
+<h1 align="center">
+    cargo-metask
+    <div width="100%" align="right">
+        <a href="https://github.com/kanarus/cargo-metask/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/crates/l/cargo-metask.svg" /></a>
+        <a href="https://github.com/kanarus/cargo-metask/actions"><img alt="CI status" src="https://github.com/kanarus/cargo-metask/actions/workflows/CI.yml/badge.svg"/></a>
+        <a href="https://crates.io/crates/cargo-metask"><img alt="crates.io" src="https://img.shields.io/crates/v/cargo-metask" /></a>
+    </div>
+</h1>
 
-A lightweight task runner for tasks defined as Cargo.toml metadata
+Cargo task runner for `{package, workspace}.metadata.tasks`.
 
 ## Installation
 
@@ -29,9 +36,15 @@ cargo metask greet
 cargo task greet
 ```
 
-## Development
+## Parallel Execution
 
-cargo-metask is currently in early development stage and may have some unexpected behavior or missing features. If you have any feedback or suggestions, feel free to open [Issues](https://github.com/kanarus/cargo-metask/issues) or [Pull requests](https://github.com/kanarus/cargo-metask/pulls)!
+When multiple task names are given :
+
+```sh
+cargo task task-a task-b task-c
+```
+
+the tasks are executed **in parallel**.
 
 ## License
 
