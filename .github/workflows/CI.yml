@@ -25,6 +25,7 @@ jobs:
         run: cargo check
 
       - name: Test availability at anywhere
+        shell: bash
         run: |
           cargo install --path .
           cargo new sample
