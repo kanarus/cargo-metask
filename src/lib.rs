@@ -79,8 +79,12 @@ pub fn run() -> io::Result<()> {
             Ok(())
         }
         1 => {
-            handles.pop_front().unwrap().wait()?;
-            Ok(())
+            let status = handles.pop_front().unwrap().wait()?;
+            let code = status.code().unwrap_or({
+                eprintln!("[cargo-metask] task terminated by signal");
+                1
+            });
+            exit(code);
         }
         _ => {
             let mut error_code = None;
@@ -90,7 +94,7 @@ pub fn run() -> io::Result<()> {
                     None => handles.push_back(next),
 
                     // task has finished, so check its exit status
-                    Some(code) => match code.code() {
+                    Some(status) => match status.code() {
                         Some(code) => {
                             if code != 0 && error_code.is_none() {
                                 error_code = Some(code);
