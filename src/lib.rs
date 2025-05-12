@@ -64,37 +64,42 @@ pub fn run() -> io::Result<()> {
         );
     }
 
-    let mut error_code = None;
-    while let Some(mut next) = handles.pop_front() {
-        match next.try_wait()? {
-            // task is still running, so push it back to the queue
-            None => handles.push_back(next),
+    if handles.len() == 1 {
+        handles.pop_front().unwrap().wait()?;
+        Ok(())
 
-            // task has finished, so check its exit status
-            Some(code) => match code.code() {
-                Some(code) => {
-                    if code != 0 && error_code.is_none() {
-                        error_code = Some(code);
+    } else {
+        let mut error_code = None;
+        while let Some(mut next) = handles.pop_front() {
+            match next.try_wait()? {
+                // task is still running, so push it back to the queue
+                None => handles.push_back(next),
+
+                // task has finished, so check its exit status
+                Some(code) => match code.code() {
+                    Some(code) => {
+                        if code != 0 && error_code.is_none() {
+                            error_code = Some(code);
+                        }
                     }
-                }
-                None => {
-                    eprintln!("[cargo-metask] task terminated by signal");
-                    if error_code.is_none() {
-                        error_code = Some(1);
+                    None => {
+                        eprintln!("[cargo-metask] task terminated by signal");
+                        if error_code.is_none() {
+                            error_code = Some(1);
+                        }
                     }
                 }
             }
+
+            // Sleep for a short time to avoid busy waiting.
+            // 
+            // This will not be a problem in practice :
+            // * the tasks are usually short-lived
+            // * the queue is small
+            std::thread::sleep(std::time::Duration::from_millis(10));
         }
-
-        // Sleep for a short time to avoid busy waiting.
-        // 
-        // This will not be a problem in practice :
-        // * the tasks are usually short-lived
-        // * the queue is small
-        std::thread::sleep(std::time::Duration::from_millis(10));
+        exit(error_code.unwrap_or(0));
     }
-
-    exit(error_code.unwrap_or(0));
 }
 
 fn get_task_def(cargo_toml: &toml::Value) -> Option<&toml::Table> {
