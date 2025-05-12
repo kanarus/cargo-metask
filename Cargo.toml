@@ -12,8 +12,8 @@ description   = "Cargo task runner for package.metadata.tasks"
 keywords = [
     "cargo",
     "subcommand",
-    "plugin",
     "task",
+    "task-runner",
     "build",
 ]
 categories = [
