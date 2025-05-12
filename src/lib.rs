@@ -49,56 +49,72 @@ pub fn run() -> io::Result<()> {
 
     // execute tasks in parallel...
 
-    let shell = env::var("SHELL");
-    let shell = shell.as_deref().unwrap_or("/bin/sh");
-
     let mut handles = std::collections::VecDeque::with_capacity(tasks.len());
-    for task in &tasks {
-        let task = format!("set -Cue\n{task}");
-        handles.push_back(
-            Command::new(shell)
-                .args(["-c", &task])
+    #[cfg(not(target_os = "windows"))] {
+        let shell = env::var("SHELL");
+        let shell = shell.as_deref().unwrap_or("/bin/sh");
+        for task in &tasks {
+            handles.push_back(
+                Command::new(shell)
+                .args(["-c", &format!("set -Cue\n{task}")])
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
                 .spawn()?
-        );
+            );
+        }
+    }
+    #[cfg(target_os = "windows")] {
+        for task in &tasks {
+            handles.push_back(
+                Command::new("cmd")
+                .args(["/C", &format!("cmd /C {task}")])
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .spawn()?
+            );
+        }
     }
 
-    if handles.len() == 1 {
-        handles.pop_front().unwrap().wait()?;
-        Ok(())
+    match handles.len() {
+        0 => {
+            Ok(())
+        }
+        1 => {
+            handles.pop_front().unwrap().wait()?;
+            Ok(())
+        }
+        _ => {
+            let mut error_code = None;
+            while let Some(mut next) = handles.pop_front() {
+                match next.try_wait()? {
+                    // task is still running, so push it back to the queue
+                    None => handles.push_back(next),
 
-    } else {
-        let mut error_code = None;
-        while let Some(mut next) = handles.pop_front() {
-            match next.try_wait()? {
-                // task is still running, so push it back to the queue
-                None => handles.push_back(next),
-
-                // task has finished, so check its exit status
-                Some(code) => match code.code() {
-                    Some(code) => {
-                        if code != 0 && error_code.is_none() {
-                            error_code = Some(code);
+                    // task has finished, so check its exit status
+                    Some(code) => match code.code() {
+                        Some(code) => {
+                            if code != 0 && error_code.is_none() {
+                                error_code = Some(code);
+                            }
                         }
-                    }
-                    None => {
-                        eprintln!("[cargo-metask] task terminated by signal");
-                        if error_code.is_none() {
-                            error_code = Some(1);
+                        None => {
+                            eprintln!("[cargo-metask] task terminated by signal");
+                            if error_code.is_none() {
+                                error_code = Some(1);
+                            }
                         }
                     }
                 }
-            }
 
-            // Sleep for a short time to avoid busy waiting.
-            // 
-            // This will not be a problem in practice :
-            // * the tasks are usually short-lived
-            // * the queue is small
-            std::thread::sleep(std::time::Duration::from_millis(10));
+                // Sleep for a short time to avoid busy waiting.
+                // 
+                // This will not be a problem in practice :
+                // * the tasks are usually short-lived
+                // * the queue is small
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            exit(error_code.unwrap_or(0));
         }
-        exit(error_code.unwrap_or(0));
     }
 }
 
