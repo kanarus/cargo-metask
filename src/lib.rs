@@ -80,7 +80,7 @@ pub fn run() -> io::Result<()> {
         }
         1 => {
             let status = handles.pop_front().unwrap().wait()?;
-            let code = status.code().unwrap_or({
+            let code = status.code().unwrap_or_else(|| {
                 eprintln!("[cargo-metask] task terminated by signal");
                 1
             });
