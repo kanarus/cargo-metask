@@ -52,9 +52,11 @@ pub fn run() -> io::Result<()> {
     let shell = env::var("SHELL");
     let shell = shell.as_deref().unwrap_or("/bin/sh");
 
+    let newline = if cfg!(target_os = "windows") {"\r\n"} else {"\n"};
+
     let mut handles = std::collections::VecDeque::with_capacity(tasks.len());
     for task in &tasks {
-        let task = format!("set -Cue\n{task}");
+        let task = format!("set -Cue{newline}{task}");
         handles.push_back(
             Command::new(shell)
                 .args(["-c", &task])
