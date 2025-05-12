@@ -52,10 +52,9 @@ pub fn run() -> io::Result<()> {
     let mut handles = std::collections::VecDeque::with_capacity(tasks.len());
     #[cfg(not(target_os = "windows"))] {
         let shell = env::var("SHELL");
-        let shell = shell.as_deref().unwrap_or("/bin/sh");
         for task in &tasks {
             handles.push_back(
-                Command::new(shell)
+                Command::new(shell.as_deref().unwrap_or("/bin/sh"))
                 .args(["-c", &format!("set -Cue\n{task}")])
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
@@ -67,7 +66,7 @@ pub fn run() -> io::Result<()> {
         for task in &tasks {
             handles.push_back(
                 Command::new("cmd")
-                .args(["/C", &format!("cmd /C {task}")])
+                .args(["/C", task])
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
                 .spawn()?
