@@ -50,12 +50,14 @@ pub fn run() -> io::Result<()> {
     // execute tasks in parallel...
 
     let shell = env::var("SHELL");
+    let shell = shell.as_deref().unwrap_or("/bin/sh");
 
     let mut handles = std::collections::VecDeque::with_capacity(tasks.len());
     for task in &tasks {
+        let task = format!("set -Cue\n{task}");
         handles.push_back(
-            Command::new(shell.as_deref().unwrap_or("sh"))
-                .args(["-c", task])
+            Command::new(shell)
+                .args(["-c", &task])
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
                 .spawn()?
